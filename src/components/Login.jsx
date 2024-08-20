@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
   let [fullname, setFullname] = useState("");
@@ -19,8 +21,31 @@ const Login = () => {
   let [details, setDetails] = useState([]);
 
   let handleLogin = () => {
+    // Validation: Check if any field is empty
+    if (!fullname || !fullemail || !fullpass) {
+      toast.error('Please fill in all fields!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      return;
+    }
+
     // Append the new values to the details array
     setDetails(prevDetails => [...prevDetails, { fullname, fullemail, fullpass }]);
+
+    // Clear the input fields by resetting the state
+    setFullname("");
+    setFullemail("");
+    setFullPass("");
+  }
+
+  let handleDelete = (index) => {
+    setDetails(prevDetails => prevDetails.filter((_, i) => i !== index));
   }
 
   return (
@@ -29,6 +54,7 @@ const Login = () => {
         <div className="flex justify-center">
           <input
             onChange={handleFullname}
+            value={fullname}
             className="bg-transparent border-b-[#26262649] border-b-[1px] py-[8px] outline-none"
             type="text"
             placeholder="Name"
@@ -37,6 +63,7 @@ const Login = () => {
         <div className="flex justify-center mt-[20px]">
           <input
             onChange={handleFullemail}
+            value={fullemail}
             className="bg-transparent border-b-[#26262649] border-b-[1px] py-[8px] outline-none"
             type="email"
             placeholder="Email"
@@ -45,6 +72,7 @@ const Login = () => {
         <div className="flex justify-center mt-[20px]">
           <input
             onChange={handleFullpassword}
+            value={fullpass}
             className="bg-transparent border-b-[#26262649] border-b-[1px] py-[8px] outline-none"
             type="password"
             placeholder="Password"
@@ -61,15 +89,25 @@ const Login = () => {
         <div className="mt-[20px] w-[400px] mx-auto bg-[#f5f5f5] rounded-[10px] p-[20px]">
           <ul>
             {details.map((detail, index) => (
-              <li key={index}>
-                <strong>Name:</strong> {detail.fullname}, 
-                <strong> Email:</strong> {detail.fullemail}, 
-                <strong> Password:</strong> {detail.fullpass}
+              <li key={index} className="flex justify-between items-center">
+                <div>
+                  <strong>Name:</strong> {detail.fullname}, 
+                  <strong> Email:</strong> {detail.fullemail}, 
+                  <strong> Password:</strong> {detail.fullpass}
+                </div>
+                <button 
+                  onClick={() => handleDelete(index)} 
+                  className="bg-red-500 text-white px-[10px] py-[5px] rounded-[5px] ml-[10px]"
+                >
+                  Delete
+                </button>
               </li>
             ))}
           </ul>
         </div>
       )}
+
+      <ToastContainer />
     </div>
   )
 }
